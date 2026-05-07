@@ -6,6 +6,7 @@ import com.turkcell.data.dto.TokenPairDto
 import retrofit2.http.Body
 import retrofit2.http.POST
 
+// Retrofit ile spesifik bir API'e istek atan kodu yazdık.
 interface AuthApi {
     @POST("/auth/login")
     suspend fun login(@Body body: CredentialsDto): TokenPairDto

@@ -10,7 +10,6 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import com.turkcell.core.ui.theme.TicketAppTheme
 
-
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,10 +17,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             TicketAppTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    Text("App is Ready")
+                    Text("App is ready")
                 }
             }
         }
     }
 }
-

@@ -50,6 +50,7 @@ dependencies {
 
     // Local Persistence
     implementation(libs.androidx.datastore.preferences)
+
     // DI
     implementation(libs.koin.android)
 }

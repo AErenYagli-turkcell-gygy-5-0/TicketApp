@@ -18,7 +18,7 @@ val dataModule = module {
             isLenient = true
         }
         Retrofit.Builder()
-            .baseUrl(" ")
+            .baseUrl("https://10.0.2.2:8080/") //TODO baseUrl eklenecek. şimdilik ".baseUrl("https://10.0.2.2:8080/")" kullanarak hata alma.
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .build()
     }

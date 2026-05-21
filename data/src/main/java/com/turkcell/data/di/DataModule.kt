@@ -1,11 +1,14 @@
 package com.turkcell.data.di
 
 import com.turkcell.core.domain.AuthRepository
+import com.turkcell.core.domain.EventRepository
 import com.turkcell.data.local.TokenStore
 import com.turkcell.data.network.AuthInterceptor
 import com.turkcell.data.network.TokenAuthenticator
 import com.turkcell.data.remote.AuthApi
+import com.turkcell.data.remote.EventApi
 import com.turkcell.data.repository.AuthRepositoryImpl
+import com.turkcell.data.repository.EventRepositoryImpl
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -22,15 +25,9 @@ private val REFRESH_RETROFIT = named("refresh_retrofit")
 private val REFRESH_API = named("refresh_api")
 
 val dataModule = module {
-    // Scope (Kapsam)
-    // 3 temel seçenek
-
-    // Yaşam döngüsündeki bağımlılığın davranış biçimi
-
-    // Single (Singleton) -> Uygulama yaşam döngüsü boyunca tek örnek.
     single {
         Json {
-            ignoreUnknownKeys = true // Cevapta var olan ama classta olmayan alanları ignore et.
+            ignoreUnknownKeys = true
             explicitNulls = false
             isLenient = true
         }
@@ -55,7 +52,6 @@ val dataModule = module {
         )
     }
 
-    // Refresh Stack
     single(REFRESH_CLIENT) {
         OkHttpClient.Builder().addInterceptor(get<HttpLoggingInterceptor>()).build()
     }
@@ -73,10 +69,7 @@ val dataModule = module {
     {
         get<Retrofit>(REFRESH_RETROFIT).create(AuthApi::class.java)
     }
-    // Refresh Stack
 
-
-    // HTTP isteklerini yönetmek..
     single {
         OkHttpClient.Builder()
             .addInterceptor(get<AuthInterceptor>())
@@ -92,10 +85,20 @@ val dataModule = module {
             .addConverterFactory(get<Json>().asConverterFactory("application/json".toMediaType()))
             .build()
     }
+
     single {
         get<Retrofit>().create(AuthApi::class.java)
     }
 
+    // ← YENİ: EventApi Service
+    single {
+        get<Retrofit>().create(EventApi::class.java)
+    }
+
+    // ← YENİ: EventRepository Implementation
+    single<EventRepository> {
+        EventRepositoryImpl(eventApi = get())
+    }
 
     single<AuthRepository> {
         AuthRepositoryImpl(
@@ -103,8 +106,4 @@ val dataModule = module {
             tokenStore = get()
         )
     }
-
-    // factory -> Her çağırıldığı noktada yeni instance üretir. Her fonksiyon için birer örnek
-
-    // scoped -> Class -> tüm fonksiyonlarına 1 örnek
 }

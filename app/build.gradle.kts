@@ -71,4 +71,8 @@ dependencies {
     // ViewModel+Compose
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.kotlinx.serialization.json)
+
+    implementation("androidx.compose.material:material:1.6.0")
+
+    implementation("io.coil-kt.coil3:coil-compose:3.0.0")
 }

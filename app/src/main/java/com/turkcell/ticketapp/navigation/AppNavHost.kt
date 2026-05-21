@@ -3,20 +3,19 @@ package com.turkcell.ticketapp.navigation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.turkcell.core.domain.AuthRepository
+import com.turkcell.ticketapp.screen.HomeScreen
 import com.turkcell.ticketapp.screen.LoginScreen
+import com.turkcell.ticketapp.screen.RegisterScreen
 import org.koin.compose.koinInject
 
 
@@ -47,7 +46,12 @@ private fun SplashScreen(){
 private fun AuthedNavHost(navController: NavHostController){
     NavHost(navController=navController, startDestination = Home){
         composable<Home> {
-            Text("Ana Sayfa")
+            HomeScreen(
+                onEventClick = { eventId ->
+                    // TODO: Event detail sayfasına git
+                    // navController.navigate(EventDetail(eventId))
+                }
+            )
         }
     }
 }
@@ -62,7 +66,16 @@ private fun UnAuthedNavHost(navController: NavHostController){
             )
         }
         composable<Register> {
-            Text("Register Screen")
+            RegisterScreen(
+                onRegisterSuccess = {
+                    navController.navigate(Login) {
+                        popUpTo(Register) { inclusive = true }
+                    }
+                },
+                onNavigateToLogin = {
+                    navController.navigateUp()
+                }
+            )
         }
     }
 }

@@ -40,24 +40,18 @@ val dataModule = module {
     }
 
     single {
-        TokenStore(context=get())
+        TokenStore(context = get())
     }
 
     single { AuthInterceptor(tokenStore = get()) }
 
-    single {
-        TokenAuthenticator(
-            tokenStore = get(),
-            refreshApiProvider = get(REFRESH_API)
-        )
-    }
-
     single(REFRESH_CLIENT) {
-        OkHttpClient.Builder().addInterceptor(get<HttpLoggingInterceptor>()).build()
+        OkHttpClient.Builder()
+            .addInterceptor(get<HttpLoggingInterceptor>())
+            .build()
     }
 
-    single(REFRESH_RETROFIT)
-    {
+    single(REFRESH_RETROFIT) {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(get(REFRESH_CLIENT))
@@ -65,9 +59,15 @@ val dataModule = module {
             .build()
     }
 
-    single(REFRESH_API)
-    {
+    single(REFRESH_API) {
         get<Retrofit>(REFRESH_RETROFIT).create(AuthApi::class.java)
+    }
+
+    single {
+        TokenAuthenticator(
+            tokenStore = get(),
+            refreshApiProvider = { get(REFRESH_API) }  // ← LAMBDA OLARAK GEÇIR
+        )
     }
 
     single {
@@ -90,12 +90,10 @@ val dataModule = module {
         get<Retrofit>().create(AuthApi::class.java)
     }
 
-    // ← YENİ: EventApi Service
     single {
         get<Retrofit>().create(EventApi::class.java)
     }
 
-    // ← YENİ: EventRepository Implementation
     single<EventRepository> {
         EventRepositoryImpl(eventApi = get())
     }

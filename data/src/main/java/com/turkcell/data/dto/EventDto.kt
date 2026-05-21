@@ -7,11 +7,9 @@ data class EventDto(
     val id: String,
     val name: String,
     val description: String,
-    val startDate: String,
-    val endDate: String,
-    val location: String,
-    val imageUrl: String,
-    val price: Double,
+    val place: String,
+    val startsAt: String,
+    val endsAt: String,
     val ticketTypes: List<TicketTypeDto> = emptyList()
 )
 
@@ -19,7 +17,9 @@ data class EventDto(
 data class TicketTypeDto(
     val id: String,
     val name: String,
-    val price: Double,
-    val quantity: Int,
-    val soldQuantity: Int = 0
+    val priceCents: Int,
+    val capacity: Int,
+    val soldCount: Int,
+    val remaining: Int
 )
+

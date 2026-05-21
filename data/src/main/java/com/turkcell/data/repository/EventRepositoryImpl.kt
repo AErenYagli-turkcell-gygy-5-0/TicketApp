@@ -23,18 +23,17 @@ class EventRepositoryImpl(
                 id = dto.id,
                 name = dto.name,
                 description = dto.description,
-                startDate = dto.startDate,
-                endDate = dto.endDate,
-                location = dto.location,
-                imageUrl = dto.imageUrl,
-                price = dto.price,
+                place = dto.place,
+                startsAt = dto.startsAt,
+                endsAt = dto.endsAt,
                 ticketTypes = dto.ticketTypes.map { ticketDto ->
                     TicketType(
                         id = ticketDto.id,
                         name = ticketDto.name,
-                        price = ticketDto.price,
-                        quantity = ticketDto.quantity,
-                        soldQuantity = ticketDto.soldQuantity
+                        priceCents = ticketDto.priceCents,
+                        capacity = ticketDto.capacity,
+                        soldCount = ticketDto.soldCount,
+                        remaining = ticketDto.remaining
                     )
                 }
             )
@@ -48,18 +47,17 @@ class EventRepositoryImpl(
             id = dto.id,
             name = dto.name,
             description = dto.description,
-            startDate = dto.startDate,
-            endDate = dto.endDate,
-            location = dto.location,
-            imageUrl = dto.imageUrl,
-            price = dto.price,
+            place = dto.place,
+            startsAt = dto.startsAt,
+            endsAt = dto.endsAt,
             ticketTypes = dto.ticketTypes.map { ticketDto ->
                 TicketType(
                     id = ticketDto.id,
                     name = ticketDto.name,
-                    price = ticketDto.price,
-                    quantity = ticketDto.quantity,
-                    soldQuantity = ticketDto.soldQuantity
+                    priceCents = ticketDto.priceCents,
+                    capacity = ticketDto.capacity,
+                    soldCount = ticketDto.soldCount,
+                    remaining = ticketDto.remaining
                 )
             }
         )

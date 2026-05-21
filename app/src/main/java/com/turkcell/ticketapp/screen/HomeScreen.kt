@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Error
@@ -36,9 +35,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.pull.refresh.PullRefreshIndicator
-import androidx.pull.refresh.pullRefresh
-import androidx.pull.refresh.rememberPullRefreshState
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import coil3.compose.AsyncImage
 import com.turkcell.core.domain.Event
 import com.turkcell.core.domain.Purchase
@@ -47,6 +47,7 @@ import com.turkcell.core.domain.Ticket
 import com.turkcell.ticketapp.viewmodel.HomeViewModel
 import org.koin.androidx.compose.koinViewModel
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = koinViewModel(),
@@ -63,7 +64,7 @@ fun HomeScreen(
             .fillMaxSize()
             .pullRefresh(pullRefreshState)
     ) {
-        if (state.isLoading && state.events.isEmpty() && state.tickets.isEmpty() && state.purchases.isEmpty()) {
+        if (state.eventsState.isLoading && state.ticketsState.isLoading && state.purchasesState.isLoading) {
             LoadingScreen()
         } else {
             LazyColumn(
@@ -73,29 +74,29 @@ fun HomeScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 item {
-                    EventsSection(
-                        events = state.events,
-                        isLoading = state.eventsLoading,
-                        error = state.eventsError,
+                    EventsSectionComposable(
+                        events = state.eventsState.events,
+                        isLoading = state.eventsState.isLoading,
+                        error = state.eventsState.error,
                         onEventClick = onEventClick,
                         onRetry = viewModel::loadData
                     )
                 }
 
                 item {
-                    TicketsSection(
-                        tickets = state.tickets,
-                        isLoading = state.ticketsLoading,
-                        error = state.ticketsError,
+                    TicketsSectionComposable(
+                        tickets = state.ticketsState.tickets,
+                        isLoading = state.ticketsState.isLoading,
+                        error = state.ticketsState.error,
                         onRetry = viewModel::loadData
                     )
                 }
 
                 item {
-                    PurchasesSection(
-                        purchases = state.purchases,
-                        isLoading = state.purchasesLoading,
-                        error = state.purchasesError,
+                    PurchasesSectionComposable(
+                        purchases = state.purchasesState.purchases,
+                        isLoading = state.purchasesState.isLoading,
+                        error = state.purchasesState.error,
                         onRetry = viewModel::loadData
                     )
                 }
@@ -121,7 +122,7 @@ private fun LoadingScreen() {
 }
 
 @Composable
-private fun EventsSection(
+private fun EventsSectionComposable(
     events: List<Event>,
     isLoading: Boolean,
     error: String?,
@@ -169,14 +170,14 @@ private fun EventsSection(
                 }
             }
             error != null -> {
-                ErrorCard(error = error, onRetry = onRetry)
+                ErrorCardComposable(error = error, onRetry = onRetry)
             }
             events.isEmpty() -> {
-                EmptyCard(text = "Hiç etkinlik bulunamadı")
+                EmptyCardComposable(text = "Hiç etkinlik bulunamadı")
             }
             else -> {
                 events.forEach { event ->
-                    EventCard(event = event, onClick = { onEventClick(event.id) })
+                    EventCardComposable(event = event, onClick = { onEventClick(event.id) })
                     Spacer(modifier = Modifier.height(8.dp))
                 }
             }
@@ -185,7 +186,7 @@ private fun EventsSection(
 }
 
 @Composable
-private fun EventCard(
+private fun EventCardComposable(
     event: Event,
     onClick: () -> Unit
 ) {
@@ -197,47 +198,60 @@ private fun EventCard(
         color = MaterialTheme.colorScheme.surfaceVariant,
         tonalElevation = 2.dp
     ) {
-        Row(
-            modifier = Modifier.padding(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        Column(
+            modifier = Modifier.padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            AsyncImage(
-                model = event.imageUrl,
-                contentDescription = event.name,
-                modifier = Modifier
-                    .size(80.dp)
-                    .background(
-                        color = MaterialTheme.colorScheme.primaryContainer,
-                        shape = RoundedCornerShape(6.dp)
-                    ),
-                contentScale = ContentScale.Crop
+            Text(
+                text = event.name,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Bold
             )
 
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(vertical = 4.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+            Text(
+                text = event.description,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "Mekan",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = event.place,
+                        style = MaterialTheme.typography.bodySmall,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "Başlangıç",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = event.startsAt.take(10),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            }
+
+            if (event.ticketTypes.isNotEmpty()) {
                 Text(
-                    text = event.name,
-                    style = MaterialTheme.typography.bodyMedium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = event.location,
-                    style = MaterialTheme.typography.bodySmall,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Text(
-                    text = "₺${event.price}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.SemiBold
+                    text = "Bilet Türleri: ${event.ticketTypes.size}",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
         }
@@ -245,7 +259,7 @@ private fun EventCard(
 }
 
 @Composable
-private fun TicketsSection(
+private fun TicketsSectionComposable(
     tickets: List<Ticket>,
     isLoading: Boolean,
     error: String?,
@@ -292,14 +306,14 @@ private fun TicketsSection(
                 }
             }
             error != null -> {
-                ErrorCard(error = error, onRetry = onRetry)
+                ErrorCardComposable(error = error, onRetry = onRetry)
             }
             tickets.isEmpty() -> {
-                EmptyCard(text = "Henüz bilet satın almadınız")
+                EmptyCardComposable(text = "Henüz bilet satın almadınız")
             }
             else -> {
                 tickets.forEach { ticket ->
-                    TicketCard(ticket = ticket)
+                    TicketCardComposable(ticket = ticket)
                     Spacer(modifier = Modifier.height(8.dp))
                 }
             }
@@ -308,7 +322,7 @@ private fun TicketsSection(
 }
 
 @Composable
-private fun TicketCard(ticket: Ticket) {
+private fun TicketCardComposable(ticket: Ticket) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(8.dp),
@@ -349,15 +363,16 @@ private fun TicketCard(ticket: Ticket) {
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    StatusBadge(status = ticket.status.name)
                 }
             }
+
+            StatusBadgeComposable(status = ticket.status.name)
         }
     }
 }
 
 @Composable
-private fun PurchasesSection(
+private fun PurchasesSectionComposable(
     purchases: List<Purchase>,
     isLoading: Boolean,
     error: String?,
@@ -384,7 +399,7 @@ private fun PurchasesSection(
                 modifier = Modifier.size(24.dp)
             )
             Text(
-                text = "SATINARLAMALARIM",
+                text = "SATIN ALMALARIM",
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.weight(1f)
             )
@@ -404,14 +419,14 @@ private fun PurchasesSection(
                 }
             }
             error != null -> {
-                ErrorCard(error = error, onRetry = onRetry)
+                ErrorCardComposable(error = error, onRetry = onRetry)
             }
             purchases.isEmpty() -> {
-                EmptyCard(text = "Henüz satın alma yapılmamış")
+                EmptyCardComposable(text = "Henüz satın alma yapılmamış")
             }
             else -> {
                 purchases.forEach { purchase ->
-                    PurchaseCard(purchase = purchase)
+                    PurchaseCardComposable(purchase = purchase)
                     Spacer(modifier = Modifier.height(8.dp))
                 }
             }
@@ -420,7 +435,7 @@ private fun PurchasesSection(
 }
 
 @Composable
-private fun PurchaseCard(purchase: Purchase) {
+private fun PurchaseCardComposable(purchase: Purchase) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(8.dp),
@@ -495,11 +510,11 @@ private fun PurchaseCard(purchase: Purchase) {
                 }
             }
 
-            PurchaseStatusBadge(status = purchase.status)
+            PurchaseStatusBadgeComposable(status = purchase.status)
 
-            if (purchase.paidAt != null) {
+            purchase.paidAt?.let { paidAt ->
                 Text(
-                    text = "Ödeme Tarihi: ${purchase.paidAt?.take(10)}",
+                    text = "Ödeme Tarihi: ${paidAt.take(10)}",
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -509,7 +524,7 @@ private fun PurchaseCard(purchase: Purchase) {
 }
 
 @Composable
-private fun StatusBadge(status: String) {
+private fun StatusBadgeComposable(status: String) {
     val backgroundColor = when (status) {
         "VALID" -> Color(0xFF4CAF50)
         "USED" -> Color(0xFF2196F3)
@@ -526,7 +541,6 @@ private fun StatusBadge(status: String) {
 
     Surface(
         modifier = Modifier
-            .align(Alignment.End)
             .background(color = backgroundColor, shape = RoundedCornerShape(4.dp))
             .padding(horizontal = 8.dp, vertical = 4.dp),
         color = backgroundColor
@@ -541,22 +555,21 @@ private fun StatusBadge(status: String) {
 }
 
 @Composable
-private fun PurchaseStatusBadge(status: com.turkcell.core.domain.PurchaseStatus) {
+private fun PurchaseStatusBadgeComposable(status: PurchaseStatus) {
     val backgroundColor = when (status) {
-        com.turkcell.core.domain.PurchaseStatus.PENDING -> Color(0xFFFF9800)
-        com.turkcell.core.domain.PurchaseStatus.COMPLETED -> Color(0xFF4CAF50)
-        com.turkcell.core.domain.PurchaseStatus.CANCELLED -> Color(0xFFF44336)
+        PurchaseStatus.PENDING -> Color(0xFFFF9800)
+        PurchaseStatus.COMPLETED -> Color(0xFF4CAF50)
+        PurchaseStatus.CANCELLED -> Color(0xFFF44336)
     }
 
     val statusText = when (status) {
-        com.turkcell.core.domain.PurchaseStatus.PENDING -> "Beklemede"
-        com.turkcell.core.domain.PurchaseStatus.COMPLETED -> "Tamamlandı"
-        com.turkcell.core.domain.PurchaseStatus.CANCELLED -> "İptal Edildi"
+        PurchaseStatus.PENDING -> "Beklemede"
+        PurchaseStatus.COMPLETED -> "Tamamlandı"
+        PurchaseStatus.CANCELLED -> "İptal Edildi"
     }
 
     Surface(
         modifier = Modifier
-            .align(Alignment.End)
             .background(color = backgroundColor, shape = RoundedCornerShape(4.dp))
             .padding(horizontal = 8.dp, vertical = 4.dp),
         color = backgroundColor
@@ -571,7 +584,7 @@ private fun PurchaseStatusBadge(status: com.turkcell.core.domain.PurchaseStatus)
 }
 
 @Composable
-private fun ErrorCard(
+private fun ErrorCardComposable(
     error: String,
     onRetry: () -> Unit
 ) {
@@ -620,7 +633,7 @@ private fun ErrorCard(
 }
 
 @Composable
-private fun EmptyCard(text: String) {
+private fun EmptyCardComposable(text: String) {
     Surface(
         modifier = Modifier
             .fillMaxWidth()

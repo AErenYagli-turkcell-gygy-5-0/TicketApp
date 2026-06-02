@@ -10,6 +10,8 @@ import com.turkcell.core.domain.TicketStatus
 import com.turkcell.core.domain.TicketType
 import com.turkcell.data.remote.EventApi
 import com.turkcell.data.util.runCatchingApi
+import com.turkcell.data.dto.CreatePurchaseRequestDto
+import com.turkcell.data.dto.PurchaseItemRequestDto
 
 class EventRepositoryImpl(
     private val eventApi: EventApi
@@ -87,6 +89,20 @@ class EventRepositoryImpl(
         )
     }
 
+    override suspend fun createPurchase(items: Map<String, Int>): Result<Purchase> = runCatchingApi {
+        eventApi.createPurchase(
+            CreatePurchaseRequestDto(
+                items = items.map { (ticketTypeId, quantity) ->
+                    PurchaseItemRequestDto(ticketTypeId = ticketTypeId, quantity = quantity)
+                }
+            )
+        )
+    }.map { dto -> dto.toPurchase() }
+
+    override suspend fun pay(purchaseId: String): Result<Purchase> = runCatchingApi {
+        eventApi.pay(purchaseId)
+    }.map { dto -> dto.toPurchase() }
+
     override suspend fun getMyPurchases(): Result<List<Purchase>> = runCatchingApi {
         eventApi.getMyPurchases()
     }.map { purchaseDtos ->
@@ -143,3 +159,26 @@ class EventRepositoryImpl(
         )
     }
 }
+
+private fun com.turkcell.data.dto.PurchaseDto.toPurchase(): Purchase = Purchase(
+    id = id,
+    status = PurchaseStatus.fromString(status),
+    totalCents = totalCents,
+    paidAt = paidAt,
+    items = items.map { itemDto ->
+        PurchaseItem(
+            id = itemDto.id,
+            ticketTypeId = itemDto.ticketTypeId,
+            quantity = itemDto.quantity,
+            unitPriceCents = itemDto.unitPriceCents
+        )
+    },
+    tickets = tickets.map { ticketDto ->
+        Ticket(
+            id = ticketDto.id,
+            qrCode = ticketDto.qrCode,
+            status = TicketStatus.fromString(ticketDto.status),
+            ticketTypeId = ticketDto.ticketTypeId
+        )
+    }
+)

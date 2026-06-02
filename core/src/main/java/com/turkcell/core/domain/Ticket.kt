@@ -1,12 +1,11 @@
 package com.turkcell.core.domain
 
 enum class TicketStatus {
-    VALID, USED, EXPIRED;
+    VALID, USED;
 
     companion object {
         fun fromString(value: String?): TicketStatus = when (value?.uppercase()) {
             "USED" -> USED
-            "EXPIRED" -> EXPIRED
             else -> VALID
         }
     }
@@ -20,12 +19,12 @@ data class Ticket(
 )
 
 enum class PurchaseStatus {
-    PENDING, COMPLETED, CANCELLED;
+    PENDING, PAID, FAILED;
 
     companion object {
         fun fromString(value: String?): PurchaseStatus = when (value?.uppercase()) {
-            "COMPLETED" -> COMPLETED
-            "CANCELLED" -> CANCELLED
+            "PAID" -> PAID
+            "FAILED" -> FAILED
             else -> PENDING
         }
     }

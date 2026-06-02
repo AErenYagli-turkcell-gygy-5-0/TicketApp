@@ -20,3 +20,13 @@ data class PurchaseItemDto(
     val unitPriceCents: Int
 )
 
+@Serializable
+data class CreatePurchaseRequestDto(
+    val items: List<PurchaseItemRequestDto>
+)
+
+@Serializable
+data class PurchaseItemRequestDto(
+    val ticketTypeId: String,
+    val quantity: Int
+)

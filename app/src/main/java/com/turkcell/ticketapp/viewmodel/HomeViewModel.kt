@@ -4,14 +4,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.turkcell.core.domain.Event
 import com.turkcell.core.domain.EventRepository
+import com.turkcell.core.domain.AuthRepository
 import com.turkcell.core.domain.Purchase
 import com.turkcell.core.domain.Ticket
-import com.turkcell.data.network.ApiException
-import com.turkcell.data.network.NetworkException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import com.turkcell.ticketapp.util.toUserMessage
 
 data class EventsUiState(
     val events: List<Event> = emptyList(),
@@ -39,7 +39,8 @@ data class HomeUiState(
 )
 
 class HomeViewModel(
-    private val eventRepository: EventRepository
+    private val eventRepository: EventRepository,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(HomeUiState())
@@ -60,6 +61,12 @@ class HomeViewModel(
         loadEvents()
         loadTickets()
         loadPurchases()
+    }
+
+    fun logout() {
+        viewModelScope.launch {
+            authRepository.logout()
+        }
     }
 
     private fun loadEvents() {

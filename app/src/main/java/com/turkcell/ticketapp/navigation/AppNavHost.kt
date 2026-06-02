@@ -16,7 +16,12 @@ import com.turkcell.core.domain.AuthRepository
 import com.turkcell.ticketapp.screen.HomeScreen
 import com.turkcell.ticketapp.screen.LoginScreen
 import com.turkcell.ticketapp.screen.RegisterScreen
+import com.turkcell.ticketapp.screen.MyTicketsScreen
+import com.turkcell.ticketapp.screen.TicketDetailScreen
+import com.turkcell.ticketapp.screen.EventDetailScreen
 import org.koin.compose.koinInject
+import androidx.navigation.toRoute
+import com.turkcell.ticketapp.screen.MyPurchasesScreen
 
 
 @Composable
@@ -44,13 +49,52 @@ private fun SplashScreen(){
 
 @Composable
 private fun AuthedNavHost(navController: NavHostController){
-    NavHost(navController=navController, startDestination = Home){
+    NavHost(navController = navController, startDestination = Home){
         composable<Home> {
             HomeScreen(
-                onEventClick = { eventId ->
-                    // TODO: Event detail sayfasına git
-                    // navController.navigate(EventDetail(eventId))
+                onEventClick = { eventId -> navController.navigate(EventDetail(eventId)) },
+                onMyTicketsClick = { navController.navigate(MyTickets) },
+                onTicketClick = { id -> navController.navigate(TicketDetail(id)) },
+                onMyPurchasesClick = { navController.navigate(MyPurchases) }
+            )
+        }
+
+        composable<EventDetail> { backStackEntry ->
+            val detail = backStackEntry.toRoute<EventDetail>()
+            EventDetailScreen(
+                eventId = detail.id,
+                onBack = { navController.navigateUp() },
+                onPaidSuccess = {
+                    navController.navigate(MyTickets) {
+                        popUpTo(Home)
+                    }
                 }
+            )
+        }
+
+        composable<MyTickets> {
+            MyTicketsScreen(
+                onTicketClick = { ticketId -> navController.navigate(TicketDetail(ticketId)) },
+                onBack = { navController.navigateUp() }
+            )
+        }
+
+        composable<TicketDetail> { backStackEntry ->
+            val detail = backStackEntry.toRoute<TicketDetail>()
+            TicketDetailScreen(
+                ticketId = detail.id,
+                onBack = { navController.navigateUp() }
+            )
+        }
+
+        composable<MyPurchases> {
+            MyPurchasesScreen(
+                onPaidSuccess = {
+                    navController.navigate(MyTickets) {
+                        popUpTo(Home)
+                    }
+                },
+                onBack = { navController.navigateUp() }
             )
         }
     }

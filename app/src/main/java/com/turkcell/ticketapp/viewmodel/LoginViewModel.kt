@@ -3,13 +3,12 @@ package com.turkcell.ticketapp.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.turkcell.core.domain.AuthRepository
-import com.turkcell.data.network.ApiException
-import com.turkcell.data.network.NetworkException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import com.turkcell.ticketapp.util.toUserMessage
 
 
 data class LoginUiState(val email: String = "",
@@ -45,14 +44,3 @@ class LoginViewModel(
     }
 }
 
-// Ömürlük
-internal fun Throwable.toUserMessage(): String = when(this)
-{
-    is ApiException -> when(code) {
-        401 -> "Email veya şifre hatalı"
-        in 500..599 -> "Sunucu şu anda cevap veremiyor"
-        else -> "Beklenmeyen bir hata oluştu"
-    }
-    is NetworkException -> "İnternet bağlantısı yok"
-    else -> message ?: "Bilinmeyen bir hata oluştu."
-}

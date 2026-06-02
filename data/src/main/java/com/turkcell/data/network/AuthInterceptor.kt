@@ -10,7 +10,8 @@ class AuthInterceptor(private val tokenStore: TokenStore) : Interceptor
     private val authPaths = setOf(
         "/auth/login",
         "/auth/register",
-        "/auth/refresh"
+        "/auth/refresh",
+        "/auth/logout"
     )
 
 

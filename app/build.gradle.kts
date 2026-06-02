@@ -73,6 +73,7 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
 
     implementation("androidx.compose.material:material:1.6.0")
-
     implementation("io.coil-kt.coil3:coil-compose:3.0.0")
+    implementation("io.github.g0dkar:qrcode-kotlin-android:4.5.0")
+
 }

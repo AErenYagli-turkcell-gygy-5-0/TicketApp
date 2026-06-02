@@ -14,7 +14,6 @@ class TokenAuthenticator(
     private val refreshApiProvider: () -> AuthApi,
 ) : Authenticator {
     override fun authenticate(route: Route?, response: Response): Request? {
-        // İsteğin tekrar tekrar buraya düşmesi -> refresh olsa bile 401 gelebilir
         if(response.priorResponseCount() >= 1) return null
 
         val refreshToken = tokenStore.refreshTokenBlocking() ?: return null;
@@ -56,6 +55,3 @@ class TokenAuthenticator(
     }
 }
 
-// Ana sayfada
-// etkinlikler ve "biletlerim" diye 2 tane tasarım
-// apiden etkinlikleri ve biletleri çekip gösterecek..

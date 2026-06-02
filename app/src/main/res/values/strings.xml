@@ -1,3 +1,80 @@
 <resources>
     <string name="app_name">Ticket App</string>
+
+    <!-- Genel / ortak -->
+    <string name="action_retry">Tekrar dene</string>
+    <string name="action_back">Geri</string>
+
+    <!-- Login -->
+    <string name="login_title">Giriş Yap</string>
+    <string name="login_email_label">Email</string>
+    <string name="login_password_label">Şifre</string>
+    <string name="login_submit">Giriş Yap</string>
+    <string name="login_to_register">Hesabın yok mu? Kayıt ol</string>
+
+    <!-- Register -->
+    <string name="register_title">Kayıt Ol</string>
+    <string name="register_submit">Kayıt Ol</string>
+    <string name="register_to_login">Zaten hesabın var mı? Giriş yap</string>
+    <string name="register_email_invalid">Geçerli bir email girin</string>
+    <string name="register_password_invalid">Şifre 8–128 karakter olmalı</string>
+
+    <!-- Home -->
+    <string name="home_title">Etkinlikler</string>
+    <string name="home_my_tickets">Biletlerim</string>
+    <string name="home_logout">Çıkış</string>
+    <string name="home_section_events">ETKİNLİKLER</string>
+    <string name="home_section_tickets">BİLETLERİM</string>
+    <string name="home_section_purchases">SATIN ALMALARIM</string>
+    <string name="home_events_empty">Hiç etkinlik bulunamadı</string>
+    <string name="home_tickets_empty">Henüz bilet satın almadınız</string>
+    <string name="home_purchases_empty">Henüz satın alma yapılmamış</string>
+    <string name="home_label_venue">Mekan</string>
+    <string name="home_label_starts">Başlangıç</string>
+    <string name="home_ticket_types_count">Bilet Türleri: %1$d</string>
+    <string name="home_ticket_id">Bilet ID: %1$s</string>
+    <string name="home_qr_code">QR Kod</string>
+    <string name="home_status">Durum</string>
+    <string name="home_order_id">Sipariş ID</string>
+    <string name="home_total">Toplam</string>
+    <string name="home_item_count">%1$d ürün</string>
+    <string name="home_ticket_count">%1$d bilet</string>
+    <string name="home_paid_at">Ödeme Tarihi: %1$s</string>
+    <string name="my_purchases_title">Satın Alımlarım</string>
+    <string name="my_purchases_empty">Henüz satın alma yapılmamış</string>
+    <string name="continue_payment">Ödemeye devam et</string>
+
+    <!-- Event Detail -->
+    <string name="event_detail_default_title">Etkinlik</string>
+    <string name="event_detail_ticket_types">Bilet Türleri</string>
+    <string name="event_detail_remaining">Kalan: %1$d / %2$d</string>
+    <string name="event_detail_total">Toplam: ₺%1$.2f</string>
+    <string name="event_detail_buy">Satın Al</string>
+    <string name="event_detail_decrease">Azalt</string>
+    <string name="event_detail_increase">Artır</string>
+
+    <!-- Ödeme Dialog -->
+    <string name="payment_dialog_title">Ödeme Onayı</string>
+    <string name="payment_dialog_total">Toplam tutar: ₺%1$.2f</string>
+    <string name="payment_dialog_confirm">Onayla ve Öde</string>
+    <string name="payment_dialog_cancel">Vazgeç</string>
+
+    <!-- Biletlerim -->
+    <string name="my_tickets_title">Biletlerim</string>
+    <string name="my_tickets_empty">Henüz biletin yok</string>
+    <string name="ticket_card_id">Bilet #%1$s</string>
+    <string name="ticket_card_type">Tür ID: %1$s…</string>
+    <string name="ticket_card_tap">QR\'ı görmek için dokun</string>
+
+    <!-- Bilet QR Detay -->
+    <string name="ticket_detail_title">Bilet</string>
+    <string name="ticket_detail_scan_hint">Kapıda bu QR\'ı okutun</string>
+    <string name="ticket_detail_qr_desc">Bilet QR kodu</string>
+
+    <!-- Durum etiketleri -->
+    <string name="status_valid">Geçerli</string>
+    <string name="status_used">Kullanıldı</string>
+    <string name="status_pending">Beklemede</string>
+    <string name="status_paid">Ödendi</string>
+    <string name="status_failed">Başarısız</string>
 </resources>

@@ -1,16 +1,21 @@
 package com.turkcell.ticketapp.di
 
+import com.turkcell.ticketapp.viewmodel.EventDetailViewModel
 import com.turkcell.ticketapp.viewmodel.HomeViewModel
 import com.turkcell.ticketapp.viewmodel.LoginViewModel
+import com.turkcell.ticketapp.viewmodel.MyPurchasesViewModel
+import com.turkcell.ticketapp.viewmodel.MyTicketsViewModel
 import com.turkcell.ticketapp.viewmodel.RegisterViewModel
+import com.turkcell.ticketapp.viewmodel.TicketDetailViewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 val appModule = module {
-    // viewModel
     viewModelOf(::LoginViewModel)
-    // viewModel for Register Screen
     viewModelOf(::RegisterViewModel)
-    // viewModel for Home Screen
     viewModelOf(::HomeViewModel)
+    viewModelOf(::EventDetailViewModel)
+    viewModelOf(::MyTicketsViewModel)
+    viewModelOf(::TicketDetailViewModel)
+    viewModelOf(::MyPurchasesViewModel)
 }

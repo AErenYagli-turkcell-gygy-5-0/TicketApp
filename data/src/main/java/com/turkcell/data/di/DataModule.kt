@@ -1,13 +1,16 @@
 package com.turkcell.data.di
 
 import com.turkcell.core.domain.AuthRepository
+import com.turkcell.core.domain.CheckinRepository
 import com.turkcell.core.domain.EventRepository
 import com.turkcell.data.local.TokenStore
 import com.turkcell.data.network.AuthInterceptor
 import com.turkcell.data.network.TokenAuthenticator
 import com.turkcell.data.remote.AuthApi
+import com.turkcell.data.remote.CheckinApi
 import com.turkcell.data.remote.EventApi
 import com.turkcell.data.repository.AuthRepositoryImpl
+import com.turkcell.data.repository.CheckinRepositoryImpl
 import com.turkcell.data.repository.EventRepositoryImpl
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -103,5 +106,13 @@ val dataModule = module {
             authApi = get(),
             tokenStore = get()
         )
+    }
+
+    single {
+        get<Retrofit>().create(CheckinApi::class.java)
+    }
+
+    single<CheckinRepository> {
+        CheckinRepositoryImpl(checkinApi = get())
     }
 }

@@ -20,3 +20,6 @@ data class TicketDetail(val id: String)
 
 @Serializable
 object MyPurchases
+
+@Serializable
+object Checkin

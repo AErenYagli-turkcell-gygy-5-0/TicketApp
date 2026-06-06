@@ -75,5 +75,6 @@ dependencies {
     implementation(libs.androidx.compose.material)
     implementation(libs.coil.compose)
     implementation(libs.qrcode.kotlin)
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 
 }

@@ -40,9 +40,11 @@
     <string name="home_item_count">%1$d ürün</string>
     <string name="home_ticket_count">%1$d bilet</string>
     <string name="home_paid_at">Ödeme Tarihi: %1$s</string>
+    <string name="continue_payment">Ödemeye devam et</string>
+
+    <!-- Purchases Detail -->
     <string name="my_purchases_title">Satın Alımlarım</string>
     <string name="my_purchases_empty">Henüz satın alma yapılmamış</string>
-    <string name="continue_payment">Ödemeye devam et</string>
 
     <!-- Event Detail -->
     <string name="event_detail_default_title">Etkinlik</string>
@@ -77,4 +79,13 @@
     <string name="status_pending">Beklemede</string>
     <string name="status_paid">Ödendi</string>
     <string name="status_failed">Başarısız</string>
+
+    <!-- Checkin etiketleri -->
+    <string name="checkin_title">Bilet Kontrol</string>
+    <string name="checkin_hint">Kullanıcının biletindeki QR kodu okutun</string>
+    <string name="checkin_start">Taramayı Başlat</string>
+    <string name="checkin_scan_next">Yeni Tarama</string>
+    <string name="checkin_processing">Kontrol ediliyor…</string>
+    <string name="checkin_valid">GEÇERLİ — Giriş Onaylandı</string>
+    <string name="checkin_ticket_type">Bilet Türü: %1$s</string>
 </resources>

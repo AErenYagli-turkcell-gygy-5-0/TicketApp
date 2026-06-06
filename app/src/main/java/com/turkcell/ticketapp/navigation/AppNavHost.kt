@@ -21,21 +21,30 @@ import com.turkcell.ticketapp.screen.TicketDetailScreen
 import com.turkcell.ticketapp.screen.EventDetailScreen
 import org.koin.compose.koinInject
 import androidx.navigation.toRoute
+import com.turkcell.core.domain.UserRole
 import com.turkcell.ticketapp.screen.MyPurchasesScreen
+import com.turkcell.ticketapp.screen.CheckinScreen
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 
 
 @Composable
 fun AppNavHost(
     navController: NavHostController = rememberNavController(),
     authRepository: AuthRepository = koinInject()
-)
-{
+) {
     val isLoggedIn by authRepository.isLoggedIn.collectAsStateWithLifecycle(initialValue = null)
+    val userRole by authRepository.userRole.collectAsStateWithLifecycle(initialValue = null)
 
-    when(isLoggedIn)
-    {
+    when (isLoggedIn) {
         null -> SplashScreen()
-        true -> AuthedNavHost(navController)
+        true -> {
+            when (userRole) {
+                null -> SplashScreen()
+                UserRole.STAFF -> StaffNavHost(navController, authRepository)
+                else -> AuthedNavHost(navController)                    // USER + ADMIN mevcut akışı görür
+            }
+        }
         false -> UnAuthedNavHost(navController)
     }
 }
@@ -118,6 +127,23 @@ private fun UnAuthedNavHost(navController: NavHostController){
                 },
                 onNavigateToLogin = {
                     navController.navigateUp()
+                }
+            )
+        }
+    }
+}
+
+@Composable
+private fun StaffNavHost(
+    navController: NavHostController,
+    authRepository: AuthRepository
+) {
+    val scope = rememberCoroutineScope()
+    NavHost(navController = navController, startDestination = Checkin) {
+        composable<Checkin> {
+            CheckinScreen(
+                onLogout = {
+                    scope.launch { authRepository.logout() }
                 }
             )
         }
